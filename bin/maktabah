@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+
+
+const maktabah  = require('..');
+const commander = require('commander');
+
+commander
+  .version(require('../package').version)
+
+commander
+  .command('dump-sql <bookfile>')
+  .description('dump maktabah bookfile to sql')
+  .option('-b, --backend <db backend>', 'database backend to use (default to "sqlite3")')
+  .option('-c, --charset <charset>', 'database charset (default to "cp1256")')
+  .action((bookfile, { backend, charset }) => {
+    maktabah.dumpSql(bookfile, backend, charset)
+      .then((query) => process.stdout.write(query + '\n'));
+  });
+
+commander
+  .command('dump-json <bookfile>')
+  .description('dump maktabah bookfile to json')
+  .option('-s, --spaces <count>', 'JSON space count')
+  .option('-c, --charset <charset>', 'database charset (default to "cp1256")')
+  .action((bookfile, { charset, spaces }) => {
+    spaces = parseInt(spaces || 0, 10);
+    maktabah.dumpJson(bookfile, charset)
+      .then((data) => {
+        process.stdout.write(JSON.stringify(data, null, spaces) + '\n');
+      });
+  });
+
+commander
+  .command('schema')
+  .description('print database schema')
+  .option('-d, --dialect <dialect>', 'database dialect (default to "sqlite3")')
+  .option('-u, --uninstall', 'dump drops query instead of create')
+  .action(({ dialect, uninstall }) => {
+    process.stdout.write(maktabah.schema(dialect, uninstall) + '\n');
+  });
+
+commander
+  .command('install <book>')
+  .description('install book')
+  .option('-d, --dialect <dialect>', 'database dialect (default to "sqlite3")')
+  .option('-u, --uninstall', 'dump delete query instead of insert')
+  .option('-c, --category', 'also insert category')
+  .action((book, { dialect, category, uninstall }) => {
+    maktabah.install(book, dialect, category, uninstall)
+      .then((query) => process.stdout.write(query + '\n'));
+  });
+
+commander
+  .parse(process.argv);
+
+if (!process.argv.slice(2).length) {
+  commander.help();
+}

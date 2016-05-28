@@ -1,0 +1,31 @@
+{
+  "name": "maktabah",
+  "version": "0.0.1",
+  "description": "Maktabah shamela utility",
+  "main": "lib/index.js",
+  "bin": {
+    "maktabah": "bin/maktabah"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arch-mage/maktabah.git"
+  },
+  "author": "Bagol <m.awad.syahid@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/arch-mage/maktabah/issues"
+  },
+  "homepage": "https://github.com/arch-mage/maktabah#readme",
+  "keywords": [
+    "book",
+    "library",
+    "maktabah"
+  ],
+  "dependencies": {
+    "bluebird": "^3.4.0",
+    "commander": "^2.9.0",
+    "csvtojson": "^0.5.12",
+    "knex": "^0.11.5",
+    "sqlite3": "^3.1.4"
+  }
+}
