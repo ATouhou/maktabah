@@ -1,0 +1,9 @@
+extends base
+
+block body
+
+  h1(dir='rtl')= kitab.name
+
+  ul(dir='rtl')
+    for part in kitab.parts
+      li: a(href='/kitab/' + kitab.id + '/part/' + part.id)= part.title

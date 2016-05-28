@@ -1,0 +1,16 @@
+{
+  "name": "server",
+  "description": "server example",
+  "dependencies": {
+    "graphql": "^0.6.0",
+    "knex": "^0.11.5",
+    "koa": "^2.0.0",
+    "koa-bodyparser": "^3.1.0",
+    "koa-morgan": "^1.0.1",
+    "koa-route": "^3.1.0",
+    "koa-views": "^5.0.1",
+    "lodash": "^4.13.1",
+    "pug": "^2.0.0-alpha8",
+    "sqlite3": "^3.1.4"
+  }
+}

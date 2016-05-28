@@ -1,0 +1,10 @@
+extends base
+
+block body
+  ul(dir='rtl')
+    for category in categories
+      li
+        a(href='/category/' + category.id)= category.name
+        ul
+          for kitab in category.kutub
+            li: a(href='/kitab/' + kitab.id)= kitab.name
