@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+const maktabah  = require('../lib/cli');
+const commander = require('commander');
+
+commander
+  .description('install or uninstall maktabah schema')
+  .option('-u, --uninstall', 'uninstall schema instead of install')
+  .option('-c, --config <config-file>', 'path to knex configurations file')
+  .option('-d, --dump', 'dump query instead of excuting directly')
+  .parse(process.argv);
+
+maktabah.schema(commander);

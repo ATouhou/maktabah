@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const maktabah  = require('../lib/cli');
+const commander = require('commander');
+
+commander
+  .description('dump maktabah bookfile to json')
+  .option('-s, --spaces <count>', 'JSON space count', parseInt)
+  .parse(process.argv);
+
+if (commander.args.length !== 1) {
+  commander.help();
+} else {
+  maktabah.dump(commander.args[0])
+    .then((data) => {
+      process.stdout.write(JSON.stringify(data, null, commander.spaces) + '\n');
+    });
+}

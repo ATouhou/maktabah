@@ -1,9 +1,0 @@
-extends base
-
-block body
-
-  h1.arab= kitab.name
-
-  ul.arab
-    for part in kitab.parts
-      li: a(href='/kitab/' + kitab.id + '/nash/' + part.conn)= part.title

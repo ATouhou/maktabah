@@ -1,80 +1,13 @@
 #!/usr/bin/env node
 
-const path      = require('path');
-const maktabah  = require('..');
 const commander = require('commander');
 
 commander
   .version(require('../package').version)
-
-commander
-  .command('dump-sql <bookfile>')
-  .description('dump maktabah bookfile to sql')
-  .option('-b, --backend <db backend>', 'database backend to use (default to "sqlite3")')
-  .option('-c, --charset <charset>', 'database charset (default to "cp1256")')
-  .action((bookfile, { backend, charset }) => {
-    maktabah.dumpSql(bookfile, backend, charset)
-      .then((query) => process.stdout.write(query + '\n'));
-  });
-
-commander
-  .command('dump-json <bookfile>')
-  .description('dump maktabah bookfile to json')
-  .option('-s, --spaces <count>', 'JSON space count')
-  .option('-c, --charset <charset>', 'database charset (default to "cp1256")')
-  .action((bookfile, { charset, spaces }) => {
-    spaces = parseInt(spaces || 0, 10);
-    maktabah.dumpJson(bookfile, charset)
-      .then((data) => {
-        process.stdout.write(JSON.stringify(data, null, spaces) + '\n');
-      });
-  });
-
-commander
-  .command('schema')
-  .description('print database schema')
-  .option('-n,--no-dump', 'install schema instead of dump the query')
-  .option('-c, --config <path-to-config>', 'knex configuration file')
-  .option('-b, --backend <backend>', 'database backend (default to "sqlite3")')
-  .option('-u, --uninstall', 'dump drops query instead of create')
-  .action((opts) => {
-    if (opts.dump)
-      process.stdout.write(maktabah.schema(opts) + '\n');
-    else
-      maktabah.schema(opts)
-        .then(() => process.exit(0))
-        .catch((err) => {
-          process.stdout.write(err.message);
-          process.exit(1);
-        });
-  });
-
-commander
-  .command('install <book>')
-  .description('install book')
-  .option('-n,--no-dump', 'install schema instead of dump the query')
-  .option('-c, --config <path-to-config>', 'knex configuration file')
-  .option('-b, --backend <backend>', 'database backend (default to "sqlite3")')
-  .option('-u, --uninstall', 'dump delete query instead of insert')
-  .option('-i, --insert-category', 'also insert category')
-  .action((book, opts) => {
-
-    if (opts.dump) {
-      maktabah.install(book, opts)
-        .then((query) => process.stdout.write(query + '\n'));
-    } else {
-      maktabah.install(book, opts)
-        .then(() => process.exit(0))
-        .catch((err) => {
-          console.error(err);
-          process.stderr.write(err.message + '\n');
-          process.exit(1);
-        });
-    }
-
-  });
-
-commander
+  .description(require('../package').description)
+  .command('dump <book>', 'dump maktabah bookfile to json')
+  .command('schema', 'install or uninstall maktabah schema')
+  .command('kitab <book>', 'install or uninstall maktabah kitab')
   .parse(process.argv);
 
 if (!process.argv.slice(2).length) {
