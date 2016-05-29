@@ -2,6 +2,9 @@
   "name": "maktabah",
   "version": "0.0.1",
   "description": "Maktabah shamela utility",
+  "engines": {
+    "node": ">=6"
+  },
   "main": "lib/index.js",
   "bin": {
     "maktabah": "bin/maktabah"
