@@ -3,7 +3,7 @@ const Promise  = require('bluebird');
 const maktabah = require('..');
 
 chai.use(require('chai-things'));
-chai.Should();
+const should = chai.Should();
 
 describe('maktabah', () => {
 
@@ -29,14 +29,12 @@ describe('maktabah', () => {
       return Promise.reduce(maktabah.installSchema(knex), p => p)
         .then(() => knex('sqlite_master').select('name'))
         .then((tables) => {
-          tables.map(table => table.name).should.deep.equal([
+          tables.map(table => table.name).should.include.members([
             'master', 'titles', 'nash', 'sPdf', 'Shrooh', 'Shorts', 'oShrooh',
             'oShr', 'nBound', 'men_u', 'men_h', 'men_b', 'com', 'avPdf', 'abc'
           ]);
         })
     });
-
-    it('drop schema');
 
   });
 
@@ -54,7 +52,31 @@ describe('maktabah', () => {
         });
     });
 
-    it('drop kitab');
+  });
+
+  describe('api', () => {
+
+    const { graphql } = require('graphql');
+    const { schema } = require('..');
+
+    const knex = require('knex')(config);
+
+    before(() => Promise.reduce(maktabah.installSchema(knex), p => p)
+      .then(() => Promise.reduce(maktabah.installKitab(knex, require('./data/jurumiyyah')), p => p)));
+
+    it('query kitab', () => {
+      const query = '{ kutub { name nushush(limit: 1) { content id page } } }';
+      return graphql(schema, query, knex)
+        .then(({ data, errors }) => {
+          should.not.exist(errors, (errors || []).join('\n'));
+          const kitab = data.kutub[0];
+          kitab.name.should.equal('الآجرومية', 'wew');
+          kitab.nushush.should.have.length(1);
+          const nash = kitab.nushush[0];
+          nash.id.should.equal(1);
+          nash.page.should.equal(5);
+        });
+    });
 
   });
 
