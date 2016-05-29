@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-
+const path      = require('path');
 const maktabah  = require('..');
 const commander = require('commander');
 
@@ -42,11 +42,16 @@ commander
 commander
   .command('install <book>')
   .description('install book')
-  .option('-d, --dialect <dialect>', 'database dialect (default to "sqlite3")')
+  .option('-c, --config <path-to-config>', 'knex configuration file')
+  .option('-b, --backend <backend>', 'database backend (default to "sqlite3")')
   .option('-u, --uninstall', 'dump delete query instead of insert')
-  .option('-c, --category', 'also insert category')
-  .action((book, { dialect, category, uninstall }) => {
-    maktabah.install(book, dialect, category, uninstall)
+  .option('-i, --insert-category', 'also insert category')
+  .action((book, { backend, insertCategory, uninstall, config }) => {
+
+    if (config)
+      config = require(path.resolve(config));
+
+    maktabah.install(book, { backend, insertCategory, uninstall, config })
       .then((query) => process.stdout.write(query + '\n'));
   });
 
