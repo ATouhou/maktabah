@@ -33,26 +33,45 @@ commander
 commander
   .command('schema')
   .description('print database schema')
-  .option('-d, --dialect <dialect>', 'database dialect (default to "sqlite3")')
+  .option('-n,--no-dump', 'install schema instead of dump the query')
+  .option('-c, --config <path-to-config>', 'knex configuration file')
+  .option('-b, --backend <backend>', 'database backend (default to "sqlite3")')
   .option('-u, --uninstall', 'dump drops query instead of create')
-  .action(({ dialect, uninstall }) => {
-    process.stdout.write(maktabah.schema(dialect, uninstall) + '\n');
+  .action((opts) => {
+    if (opts.dump)
+      process.stdout.write(maktabah.schema(opts) + '\n');
+    else
+      maktabah.schema(opts)
+        .then(() => process.exit(0))
+        .catch((err) => {
+          process.stdout.write(err.message);
+          process.exit(1);
+        });
   });
 
 commander
   .command('install <book>')
   .description('install book')
+  .option('-n,--no-dump', 'install schema instead of dump the query')
   .option('-c, --config <path-to-config>', 'knex configuration file')
   .option('-b, --backend <backend>', 'database backend (default to "sqlite3")')
   .option('-u, --uninstall', 'dump delete query instead of insert')
   .option('-i, --insert-category', 'also insert category')
-  .action((book, { backend, insertCategory, uninstall, config }) => {
+  .action((book, opts) => {
 
-    if (config)
-      config = require(path.resolve(config));
+    if (opts.dump) {
+      maktabah.install(book, opts)
+        .then((query) => process.stdout.write(query + '\n'));
+    } else {
+      maktabah.install(book, opts)
+        .then(() => process.exit(0))
+        .catch((err) => {
+          console.error(err);
+          process.stderr.write(err.message + '\n');
+          process.exit(1);
+        });
+    }
 
-    maktabah.install(book, { backend, insertCategory, uninstall, config })
-      .then((query) => process.stdout.write(query + '\n'));
   });
 
 commander

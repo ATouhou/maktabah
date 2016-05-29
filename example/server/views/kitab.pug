@@ -2,8 +2,8 @@ extends base
 
 block body
 
-  h1(dir='rtl')= kitab.name
+  h1.arab= kitab.name
 
-  ul(dir='rtl')
+  ul.arab
     for part in kitab.parts
-      li: a(href='/kitab/' + kitab.id + '/part/' + part.id)= part.title
+      li: a(href='/kitab/' + kitab.id + '/nash/' + part.conn)= part.title

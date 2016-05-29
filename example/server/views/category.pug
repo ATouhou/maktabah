@@ -1,7 +1,7 @@
 extends base
 
 block body
-  ul(dir='rtl')
+  ul.arab
     for kitab in kutub
       li
         a(href='/kitab/' + kitab.id)= kitab.name

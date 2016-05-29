@@ -6,13 +6,7 @@ const {
   GraphQLObjectType
 } = require('graphql');
 
-const knex = require('knex')({
-  client: 'sqlite3',
-  connection: {
-    filename: __dirname + '/db.sqlite3'
-  },
-  useNullAsDefault: true
-});
+const knex = require('knex')(require('../../config'));
 
 const Category = new GraphQLObjectType({
   name: 'Category',
@@ -53,7 +47,7 @@ const Kitab = new GraphQLObjectType({
     },
     parts: {
       type: new GraphQLList(Part),
-      resolve: ({ id }) => knex('part').where({ kitab_id: id })
+      resolve: ({ id }) => knex('part').where({ kitab_id: id }).orderBy('conn')
     }
   })
 });
@@ -114,6 +108,22 @@ const Nash = new GraphQLObjectType({
     kitab_id: {
       type: GraphQLInt,
       resolve: ({ kitab_id }) => kitab_id
+    },
+    next: {
+      type: Nash,
+      resolve: ({ conn, kitab_id }) => knex('nash')
+        .where('conn', '>', conn)
+        .andWhere({ kitab_id })
+        .orderBy('conn')
+        .first()
+    },
+    prev: {
+      type: Nash,
+      resolve: ({ conn, kitab_id }) => knex('nash')
+        .where('conn', '<', conn)
+        .andWhere({ kitab_id })
+        .orderBy('conn', 'desc')
+        .first()
     }
   })
 });
@@ -157,12 +167,13 @@ const query = new GraphQLObjectType({
       },
       resolve: (root, args) => knex('kitab').where(args).first()
     },
-    part: {
-      type: Part,
+    nash: {
+      type: Nash,
       args: {
-        id: { type: GraphQLInt }
+        conn: { type: GraphQLInt },
+        kitab_id: { type: GraphQLInt }
       },
-      resolve: (root, args) => knex('part').where(args).first()
+      resolve: (root, args) => knex('nash').where(args).first()
     }
   })
 });
