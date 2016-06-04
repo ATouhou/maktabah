@@ -8,6 +8,7 @@ commander
   .command('dump <book>', 'dump maktabah bookfile to json')
   .command('schema', 'install or uninstall maktabah schema')
   .command('kitab <book>', 'install or uninstall maktabah kitab')
+  .command('transform <book>', 'transform maktabah shape to couch compatible')
   .parse(process.argv);
 
 if (!process.argv.slice(2).length) {

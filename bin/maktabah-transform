@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+const maktabah  = require('../lib/cli');
+const commander = require('commander');
+
+commander
+  .description('transform maktabah shape to couch compatible')
+  .option('-s, --spaces <count>', 'JSON space count', parseInt)
+  .option('-m, --mode <mode>', 'set mode single,split', function(mode) {
+    if (!['split', 'single'].includes(mode)) {
+      console.error('only single and split are available')
+      process.exit(1);
+    }
+    return mode;
+  })
+  .parse(process.argv);
+
+if (commander.args.length < 1) {
+  commander.help();
+} else {
+  maktabah.transform(commander.args, commander)
+    .then((data) => {
+      process.stdout.write(JSON.stringify(data, null, commander.spaces) + '\n');
+    })
+    .catch((err) => {
+      process.stderr.write(err.message + '\n', () => {
+        process.exit(1);
+      });
+    });
+}
